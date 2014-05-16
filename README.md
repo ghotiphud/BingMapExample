@@ -1,6 +1,6 @@
 # Directions
 
-1. Add a File called SecretDictionary.xaml to the /BingMapsPerformance directory.
+1. Add a File called SecretDictionary.xaml to the /BingMapsExample directory.
     
     ```xml
     <ResourceDictionary
