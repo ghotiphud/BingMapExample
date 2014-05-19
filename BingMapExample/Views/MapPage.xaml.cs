@@ -1,6 +1,8 @@
-﻿using Bing.Maps;
+﻿using AutoMapper;
+using Bing.Maps;
 using BingMapExample.Common;
-using BingMapExample.ViewModels;
+using BingMapPCL.ViewModels;
+using Cirrious.MvvmCross.Plugins.Location;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,7 +26,12 @@ namespace BingMapExample.Views
     public sealed partial class MapPage : BasePage
     {
         public GeolocationHelper GeolocationHelper { get; private set; }
-        public MapVM MapVM { get; set; }
+
+        public new MapVM ViewModel
+        {
+            get { return (MapVM)base.ViewModel; }
+            set { base.ViewModel = value; }
+        }
 
         public MapPage()
         {
@@ -35,7 +42,7 @@ namespace BingMapExample.Views
 
         protected override void SaveState(SaveStateEventArgs e)
         {
-            e.PageState["MapVM"] = MapVM;
+            e.PageState["MapVM"] = ViewModel;
 
             base.SaveState(e);
         }
@@ -45,20 +52,20 @@ namespace BingMapExample.Views
             // Restore the viewModel state
             if (e.PageState != null && e.PageState.ContainsKey("MapVM"))
             {
-                MapVM = (MapVM)e.PageState["MapVM"];
+                ViewModel = (MapVM)e.PageState["MapVM"];
             }
             else
             {
-                MapVM = new MapVM();
+                ViewModel = new MapVM();
             }
-            DataContext = MapVM;
+            DataContext = ViewModel;
 
             // Any other operations
             var geoposition = await GeolocationHelper.GetCurrentGeoposition();
 
-            MapVM.CurrentLocation = new Location(geoposition.Latitude, geoposition.Longitude);
+            ViewModel.CurrentLocation = Mapper.Map<MvxCoordinates>(new Location(geoposition.Latitude, geoposition.Longitude));
 
-            BingMap.SetView(MapVM.CurrentLocation);
+            BingMap.SetView(Mapper.Map<Location>(ViewModel.CurrentLocation));
 
             base.LoadState(e);
         }

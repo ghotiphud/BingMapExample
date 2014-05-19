@@ -1,4 +1,5 @@
 ﻿using BingMapExample.Common;
+using Cirrious.MvvmCross.WindowsStore.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace BingMapExample.Views
 {
-    public class BasePage : Page
+    public class BasePage : MvxStorePage
     {
         private NavigationHelper NavigationHelper { get; set; }
 

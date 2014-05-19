@@ -1,5 +1,4 @@
-﻿using Bing.Maps;
-using BingMapExample.Common;
+﻿using BingMapPCL.DataModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,22 +7,8 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace BingMapExample.DataModels
+namespace BingMapExample.Views
 {
-    public abstract class MapItem : ObservableObject
-    {
-        public Location Location { get; set; }
-        public string Text { get; set; }
-    }
-
-    public class RedItem : MapItem
-    {
-    }
-
-    public class BlueItem : MapItem
-    {
-    }
-
     public class MapItemDataTemplateSelector : DataTemplateSelector
     {
         public DataTemplate RedTemplate { get; set; }
@@ -40,6 +25,5 @@ namespace BingMapExample.DataModels
 
             return dt;
         }
-
     }
 }

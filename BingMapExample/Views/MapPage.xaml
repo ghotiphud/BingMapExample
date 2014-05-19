@@ -41,7 +41,7 @@
             </bm:Pushpin>
         </DataTemplate>
 
-        <data:MapItemDataTemplateSelector x:Key="MapItemDataTemplateSelector" RedTemplate="{StaticResource RedTemplate}" BlueTemplate="{StaticResource BlueTemplate}" />
+        <views:MapItemDataTemplateSelector x:Key="MapItemDataTemplateSelector" RedTemplate="{StaticResource RedTemplate}" BlueTemplate="{StaticResource BlueTemplate}" />
     </Page.Resources>
 
     <!--
