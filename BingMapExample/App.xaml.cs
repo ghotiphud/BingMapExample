@@ -1,5 +1,5 @@
 ﻿using BingMapExample.Common;
-
+using BingMapExample.Views;
 using System;
 using System.Collections.Generic;
 using System.IO;

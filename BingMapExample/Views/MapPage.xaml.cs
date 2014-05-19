@@ -1,10 +1,14 @@
 ﻿using Bing.Maps;
 using BingMapExample.Common;
+using BingMapExample.DataModels;
 using BingMapExample.ViewModels;
+using ReactiveUI;
+using System.Reactive.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Input;
 using Windows.Foundation;
@@ -19,17 +23,14 @@ using Windows.UI.Xaml.Navigation;
 
 // The Items Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234233
 
-namespace BingMapExample
+namespace BingMapExample.Views
 {
-    /// <summary>
-    /// A page that displays a collection of item previews.  In the Split App this page
-    /// is used to display and select one of the available groups.
-    /// </summary>
-    public sealed partial class MapPage : Page
+    public sealed partial class MapPage : Page, IViewFor<MapVM>
     {
         public NavigationHelper NavigationHelper { get; private set; }
         public GeolocationHelper GeolocationHelper { get; private set; }
-        public MapVM MapVM { get; set; }
+        public MapVM ViewModel { get; set; }
+        object IViewFor.ViewModel { get { return ViewModel; } set { ViewModel = (MapVM)value; } }
 
         public MapPage()
         {
@@ -43,7 +44,7 @@ namespace BingMapExample
 
         private void navigationHelper_SaveState(object sender, SaveStateEventArgs e)
         {
-            e.PageState["MapVM"] = MapVM;
+            e.PageState["MapVM"] = ViewModel;
         }
 
         private async void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
@@ -51,20 +52,36 @@ namespace BingMapExample
             // Restore the viewModel state
             if (e.PageState != null && e.PageState.ContainsKey("MapVM"))
             {
-                MapVM = (MapVM)e.PageState["MapVM"];
+                ViewModel = (MapVM)e.PageState["MapVM"];
             }
             else
             {
-                MapVM = new MapVM();
+                ViewModel = new MapVM();
             }
-            DataContext = MapVM;
+            DataContext = ViewModel;
 
             // Any other operations
             var geoposition = await GeolocationHelper.GetCurrentGeoposition();
 
-            MapVM.CurrentLocation = new Location(geoposition.Latitude, geoposition.Longitude);
+            ViewModel.CurrentLocation = new Location(geoposition.Latitude, geoposition.Longitude);
 
-            BingMap.SetView(MapVM.CurrentLocation);
+            BingMap.SetView(ViewModel.CurrentLocation);
+
+            this.WhenAnyValue(x => x.ViewModel.CurrentLocation)
+                .Subscribe(x => Debug.WriteLine("HI"));
+        }
+
+        private void Pushpin_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var pushpin = (Pushpin)sender;
+            var mapItem = (MapItem)pushpin.DataContext;
+
+            ViewModel.CurrentLocation = mapItem.Location;
+
+            FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
+
+            // stop event from bubbling up to Map.
+            e.Handled = true;
         }
 
         // Wire up NavigationHelper
@@ -76,11 +93,6 @@ namespace BingMapExample
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             NavigationHelper.OnNavigatedFrom(e);
-        }
-
-        private void Pushpin_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
         }
     }
 }

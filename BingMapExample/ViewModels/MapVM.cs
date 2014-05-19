@@ -1,6 +1,7 @@
 ﻿using Bing.Maps;
 using BingMapExample.Common;
 using BingMapExample.DataModels;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,18 +9,49 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Windows.Devices.Geolocation;
 
 namespace BingMapExample.ViewModels
 {
-    public class MapVM : ObservableObject
+    public class MapVM : ReactiveObject
     {
         private static Location StartingLocation = new Location(27.952433, -82.462234);
 
-        public Location CurrentLocation { get; set; }
+        public Location _currentLocation;
+        public Location CurrentLocation
+        {
+            get { return _currentLocation; }
+            set { this.RaiseAndSetIfChanged(ref _currentLocation, value); }
+        }
+
+        public ReactiveCommand LocationChanged { get; protected set; }
+
         public ObservableCollection<MapItem> MapItems { get; set; }
 
-        public RelayCommand AddRandomRedRelay { get; set; }
+        public ReactiveCommand AddRandomRedRelay { get; protected set; }
+
+        public ReactiveCommand AddRandomBlueRelay { get; protected set; }
+
+        public ReactiveCommand ClearMapItemsRelay { get; protected set; }
+
+        public MapVM()
+        {
+            MapItems = new ObservableCollection<MapItem>();
+
+            LocationChanged = new ReactiveCommand();
+            this.WhenAnyValue(x => x.CurrentLocation).InvokeCommand(LocationChanged);
+
+            AddRandomRedRelay = new ReactiveCommand();
+            AddRandomRedRelay.Subscribe(x => AddRandomRed());
+
+            AddRandomBlueRelay = new ReactiveCommand();
+            AddRandomBlueRelay.Subscribe(x => AddRandomBlue());
+
+            ClearMapItemsRelay = new ReactiveCommand();
+            ClearMapItemsRelay.Subscribe(x => ClearMapItems());
+        }
+
         private void AddRandomRed()
         {
             var random = new Random();
@@ -35,7 +67,6 @@ namespace BingMapExample.ViewModels
             }
         }
 
-        public RelayCommand AddRandomBlueRelay { get; set; }
         private void AddRandomBlue()
         {
             var random = new Random();
@@ -51,20 +82,9 @@ namespace BingMapExample.ViewModels
             }
         }
 
-        public RelayCommand ClearMapItemsRelay { get; set; }
         private void ClearMapItems()
         {
             MapItems.Clear();
-        }
-
-        public MapVM()
-        {
-            CurrentLocation = StartingLocation;
-            MapItems = new ObservableCollection<MapItem>();
-
-            AddRandomRedRelay = new RelayCommand(() => AddRandomRed());
-            AddRandomBlueRelay = new RelayCommand(() => AddRandomBlue());
-            ClearMapItemsRelay = new RelayCommand(() => ClearMapItems());
         }
     }
 }
