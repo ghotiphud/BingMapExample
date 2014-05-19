@@ -118,6 +118,9 @@
     <Compile Include="Common\ObservableObject.cs" />
     <Compile Include="DataModels\MapItem.cs" />
     <Compile Include="ViewModels\MapVM.cs" />
+    <Compile Include="Views\BasePage.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Views\MapPage.xaml.cs">
       <DependentUpon>MapPage.xaml</DependentUpon>
     </Compile>

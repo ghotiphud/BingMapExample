@@ -19,34 +19,28 @@ using Windows.UI.Xaml.Navigation;
 
 // The Items Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234233
 
-namespace BingMapExample
+namespace BingMapExample.Views
 {
-    /// <summary>
-    /// A page that displays a collection of item previews.  In the Split App this page
-    /// is used to display and select one of the available groups.
-    /// </summary>
-    public sealed partial class MapPage : Page
+    public sealed partial class MapPage : BasePage
     {
-        public NavigationHelper NavigationHelper { get; private set; }
         public GeolocationHelper GeolocationHelper { get; private set; }
         public MapVM MapVM { get; set; }
 
         public MapPage()
         {
             this.InitializeComponent();
-            NavigationHelper = new NavigationHelper(this);
-            NavigationHelper.LoadState += navigationHelper_LoadState;
-            NavigationHelper.SaveState += navigationHelper_SaveState;
 
             GeolocationHelper = new GeolocationHelper();
         }
 
-        private void navigationHelper_SaveState(object sender, SaveStateEventArgs e)
+        protected override void SaveState(SaveStateEventArgs e)
         {
             e.PageState["MapVM"] = MapVM;
+
+            base.SaveState(e);
         }
 
-        private async void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
+        protected override async void LoadState(LoadStateEventArgs e)
         {
             // Restore the viewModel state
             if (e.PageState != null && e.PageState.ContainsKey("MapVM"))
@@ -65,17 +59,8 @@ namespace BingMapExample
             MapVM.CurrentLocation = new Location(geoposition.Latitude, geoposition.Longitude);
 
             BingMap.SetView(MapVM.CurrentLocation);
-        }
 
-        // Wire up NavigationHelper
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            NavigationHelper.OnNavigatedTo(e);
-        }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            NavigationHelper.OnNavigatedFrom(e);
+            base.LoadState(e);
         }
 
         private void Pushpin_Tapped(object sender, TappedRoutedEventArgs e)
