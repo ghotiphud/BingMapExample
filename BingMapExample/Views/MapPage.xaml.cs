@@ -25,9 +25,8 @@ using Windows.UI.Xaml.Navigation;
 
 namespace BingMapExample.Views
 {
-    public sealed partial class MapPage : Page, IViewFor<MapVM>
+    public sealed partial class MapPage : BasePage, IViewFor<MapVM>
     {
-        public NavigationHelper NavigationHelper { get; private set; }
         public GeolocationHelper GeolocationHelper { get; private set; }
         public MapVM ViewModel { get; set; }
         object IViewFor.ViewModel { get { return ViewModel; } set { ViewModel = (MapVM)value; } }
@@ -35,19 +34,16 @@ namespace BingMapExample.Views
         public MapPage()
         {
             this.InitializeComponent();
-            NavigationHelper = new NavigationHelper(this);
-            NavigationHelper.LoadState += navigationHelper_LoadState;
-            NavigationHelper.SaveState += navigationHelper_SaveState;
 
             GeolocationHelper = new GeolocationHelper();
         }
 
-        private void navigationHelper_SaveState(object sender, SaveStateEventArgs e)
+        protected override void SaveState(SaveStateEventArgs e)
         {
             e.PageState["MapVM"] = ViewModel;
         }
 
-        private async void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
+        protected override async void LoadState(LoadStateEventArgs e)
         {
             // Restore the viewModel state
             if (e.PageState != null && e.PageState.ContainsKey("MapVM"))
@@ -66,9 +62,6 @@ namespace BingMapExample.Views
             ViewModel.CurrentLocation = new Location(geoposition.Latitude, geoposition.Longitude);
 
             BingMap.SetView(ViewModel.CurrentLocation);
-
-            this.WhenAnyValue(x => x.ViewModel.CurrentLocation)
-                .Subscribe(x => Debug.WriteLine("HI"));
         }
 
         private void Pushpin_Tapped(object sender, TappedRoutedEventArgs e)
@@ -82,17 +75,6 @@ namespace BingMapExample.Views
 
             // stop event from bubbling up to Map.
             e.Handled = true;
-        }
-
-        // Wire up NavigationHelper
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            NavigationHelper.OnNavigatedTo(e);
-        }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            NavigationHelper.OnNavigatedFrom(e);
         }
     }
 }

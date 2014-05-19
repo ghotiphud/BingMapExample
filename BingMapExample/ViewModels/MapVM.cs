@@ -25,8 +25,6 @@ namespace BingMapExample.ViewModels
             set { this.RaiseAndSetIfChanged(ref _currentLocation, value); }
         }
 
-        public ReactiveCommand LocationChanged { get; protected set; }
-
         public ObservableCollection<MapItem> MapItems { get; set; }
 
         public ReactiveCommand AddRandomRedRelay { get; protected set; }
@@ -38,9 +36,6 @@ namespace BingMapExample.ViewModels
         public MapVM()
         {
             MapItems = new ObservableCollection<MapItem>();
-
-            LocationChanged = new ReactiveCommand();
-            this.WhenAnyValue(x => x.CurrentLocation).InvokeCommand(LocationChanged);
 
             AddRandomRedRelay = new ReactiveCommand();
             AddRandomRedRelay.Subscribe(x => AddRandomRed());
