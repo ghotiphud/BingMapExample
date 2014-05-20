@@ -116,7 +116,7 @@
     </Compile>
     <Compile Include="Bootstrap\LocationPluginBootstrap.cs" />
     <Compile Include="Common\GeolocationHelper.cs" />
-    <Compile Include="Common\ObservableObject.cs" />
+    <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="DebugTrace.cs" />
     <Compile Include="Setup.cs" />
     <Compile Include="Views\BasePage.cs">
@@ -129,7 +129,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
     <Compile Include="Common\NavigationHelper.cs" />
-    <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\ObservableDictionary.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -198,9 +197,7 @@
       <Name>BingMapPCL</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DataModels\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>
